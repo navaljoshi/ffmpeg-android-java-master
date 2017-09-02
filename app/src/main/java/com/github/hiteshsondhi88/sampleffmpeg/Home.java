@@ -4,8 +4,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.TextUtils;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -25,8 +26,22 @@ import com.github.hiteshsondhi88.libffmpeg.FFmpeg;
 import com.github.hiteshsondhi88.libffmpeg.LoadBinaryResponseHandler;
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException;
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedException;
+import com.googlecode.mp4parser.BasicContainer;
+import com.googlecode.mp4parser.authoring.Track;
+import com.googlecode.mp4parser.authoring.builder.DefaultMp4Builder;
+import com.googlecode.mp4parser.authoring.container.mp4.MovieCreator;
+import com.googlecode.mp4parser.authoring.tracks.AppendTrack;
+
+import java.io.File;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 
 public class Home extends Activity implements View.OnClickListener {
+    public ArrayList<String> arrFilePaths = new ArrayList<>();
 
     private static final String TAG = Home.class.getSimpleName();
 
@@ -43,6 +58,8 @@ public class Home extends Activity implements View.OnClickListener {
     Button runButton;
 
     private ProgressDialog progressDialog;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,19 +97,19 @@ public class Home extends Activity implements View.OnClickListener {
             ffmpeg.execute(command, new ExecuteBinaryResponseHandler() {
                 @Override
                 public void onFailure(String s) {
-                    addTextViewToLayout("FAILED with output : "+s);
+                    addTextViewToLayout("FAILED with output : " + s);
                 }
 
                 @Override
                 public void onSuccess(String s) {
-                    addTextViewToLayout("SUCCESS with output : "+s);
+                    addTextViewToLayout("SUCCESS with output : " + s);
                 }
 
                 @Override
                 public void onProgress(String s) {
-                    Log.d(TAG, "Started command : ffmpeg "+command);
-                    addTextViewToLayout("progress : "+s);
-                    progressDialog.setMessage("Processing\n"+s);
+                    Log.d(TAG, "Started command : ffmpeg " + command);
+                    addTextViewToLayout("progress : " + s);
+                    progressDialog.setMessage("Processing\n" + s);
                 }
 
                 @Override
@@ -106,7 +123,7 @@ public class Home extends Activity implements View.OnClickListener {
 
                 @Override
                 public void onFinish() {
-                    Log.d(TAG, "Finished command : ffmpeg "+command);
+                    Log.d(TAG, "Finished command : ffmpeg " + command);
                     progressDialog.dismiss();
                 }
             });
@@ -142,15 +159,30 @@ public class Home extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.run_command:
-               // String cmd = commandEditText.getText().toString();
-                String cmd = "-i /storage/emulated/0/input.avi -i /storage/emulated/0/logo.png -filter_complex overlay=10:main_h-overlay_h-10 /storage/emulated/0/output.avi";
+                // String cmd = commandEditText.getText().toString();
+                //f//fmpeg -i input1.mp3 -i input2.mp3 -i input3.mp3 -filter_complex concat=n=3:v=0:a=1 -f MOV -vn -y input.m4a
+
+                String cmd = "-i /storage/emulated/0/one.mp4 -i /storage/emulated/0/two.mp4 -filter_complex concat=n=2:v=1:a=1 -f MP4 /storage/emulated/0/sagdjwgadsjasgdaskjsa.mp4";
+                //String cmd1 = "-f concat -i input.txt -codec copy output.mp4";
                 String[] command = cmd.split(" ");
                 if (command.length != 0) {
-                    execFFmpegBinary(command);
+                     execFFmpegBinary(command);
                 } else {
                     Toast.makeText(Home.this, getString(R.string.empty_command_toast), Toast.LENGTH_LONG).show();
                 }
+
+               // arrFilePaths.add("/storage/emulated/0/one.mp4");
+
+              //  arrFilePaths.add("/storage/emulated/0/two.mp4");
+
+                // arrFilePaths .add(file3path);
+              //  String strVideoFolderPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+
+              //  MergeVideosHelper mergeHelper = new MergeVideosHelper(this, "/storage/emulated/0/one.mp4", "/storage/emulated/0/two.mp4");
+
                 break;
         }
     }
+
+
 }

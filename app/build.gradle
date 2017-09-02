@@ -37,4 +37,7 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile 'com.squareup.assertj:assertj-android:1.0.0'
     compile project(':FFmpegAndroid')
+   // compile 'com.googlecode.mp4parser:isoparser:1.0.5.4'
+    compile 'com.googlecode.mp4parser:isoparser:1.1.7'
+
 }
